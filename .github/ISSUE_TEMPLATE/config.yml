@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Backlog reference
+    url: https://github.com/G-Zak/omniscan-ar/tree/main/documentation/03-backlog
+    about: See the full sprint-by-sprint backlog before opening an ad-hoc issue.
