@@ -70,3 +70,5 @@ Thumbs.db
 
 # === Local planning docs (not pushed to GitHub) ===
 documentation/
+CONTRIBUTING.md
+create_mvp_issues.sh
