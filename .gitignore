@@ -1,4 +1,4 @@
-# --- Unity ---
+# === Unity (unity-client/) ===
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -11,56 +11,64 @@
 *.aab
 *.unitypackage
 *.app
-*.pdb
-*.mdb
+[Aa]ssets/AssetStoreTools*
+.vs/
+.vscode/
+.idea/
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
 sysinfo.txt
 crashlytics-build.properties
 
-# --- Java / JVM (backend) ---
+# === Java / Spring Boot (backend/) ===
 target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 *.class
 *.jar
-!gradle-wrapper.jar
+*.war
 .gradle/
 build/
-out/
-.mtj.tmp/
-hs_err_pid*
 
-# --- Node (dashboard) ---
+# === Python (cv-service/) ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+*.pt
+*.onnx
+
+# === Node / Next.js (dashboard/) ===
 node_modules/
 .next/
 out/
-dist/
 .env
 .env.local
 .env.*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
-# --- Python (cv-service) ---
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
-env/
-.env
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+# === Docker / data volumes ===
+neo4j-data/
+*.env
 
-# --- IDE / OS ---
-.vscode/
-.idea/
-*.iml
+# === OS ===
 .DS_Store
 Thumbs.db
 
+# === Editors ===
+*.swp
+*.swo
 
+# === Claude Code local settings ===
+.claude/
 
-create_mvp_issues.sh
+# === Local planning docs (not pushed to GitHub) ===
+documentation/
 CONTRIBUTING.md
+create_mvp_issues.sh
