@@ -63,3 +63,5 @@ omniscan-ar/
 ## Author
 
 **Zakaria Guennani** — building this project to specialize in AR/MR/spatial computing, with the goal of moving into applied XR roles in industrial and health-tech contexts.
+
+

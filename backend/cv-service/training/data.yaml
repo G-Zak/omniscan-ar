@@ -1,0 +1,13 @@
+# Ultralytics dataset config for demo-machine fine-tuning (S2-02).
+# Class order below defines each class's integer yoloClassId — it must match
+# the CVLabel.yoloClassId values in backend/neo4j/seed.cypher exactly, and
+# has nothing to do with COCO's original 80-class numbering.
+
+path: dataset
+train: images/train
+val: images/val
+
+names:
+  0: diesel_engine
+  1: drilling_machine
+  2: industrial_pump

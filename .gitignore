@@ -42,6 +42,15 @@ venv/
 *.pt
 *.onnx
 
+# === CV training dataset (backend/cv-service/training/) ===
+backend/cv-service/training/dataset/images/train/*
+backend/cv-service/training/dataset/images/val/*
+backend/cv-service/training/dataset/labels/train/*
+backend/cv-service/training/dataset/labels/val/*
+backend/cv-service/training/dataset/test/*
+!backend/cv-service/training/dataset/**/.gitkeep
+backend/cv-service/training/runs/
+
 # === Node / Next.js (dashboard/) ===
 node_modules/
 .next/
