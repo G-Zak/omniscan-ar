@@ -21,18 +21,7 @@
 sysinfo.txt
 crashlytics-build.properties
 
-# === Java / Spring Boot (backend/) ===
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-*.class
-*.jar
-*.war
-.gradle/
-build/
-
-# === Python (cv-service/) ===
+# === Python (backend/, cv-service/) ===
 __pycache__/
 *.py[cod]
 .venv/
