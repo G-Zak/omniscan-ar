@@ -2,7 +2,7 @@ from typing import Optional
 
 from neo4j import Driver
 
-from app.schemas import Component, Document, Machine, Model3DAsset
+from app.schemas import Component, Document, Machine, Model3DAsset, SubgraphResponse
 
 
 class MachineRepository:
@@ -53,3 +53,27 @@ class MachineRepository:
         with self.driver.session() as session:
             record = session.run(query, id=machine_id).single()
         return Model3DAsset(**dict(record["model"])) if record else None
+
+    def get_subgraph(self, machine_id: str) -> Optional[SubgraphResponse]:
+        """The core EF-03 query: machine + components + documents + model3d in one round-trip."""
+        query = """
+        MATCH (m:Machine {id: $id})
+        OPTIONAL MATCH (m)-[:HAS_COMPONENT]->(c:Component)
+        OPTIONAL MATCH (m)-[:DOCUMENTED_BY]->(mdoc:Document)
+        OPTIONAL MATCH (c)-[:DOCUMENTED_BY]->(cdoc:Document)
+        OPTIONAL MATCH (m)-[:HAS_3D_MODEL]->(model:Model3DAsset)
+        RETURN m,
+               collect(DISTINCT c) AS components,
+               collect(DISTINCT mdoc) + collect(DISTINCT cdoc) AS documents,
+               model
+        """
+        with self.driver.session() as session:
+            record = session.run(query, id=machine_id).single()
+        if record is None:
+            return None
+        return SubgraphResponse(
+            machine=Machine(**dict(record["m"])),
+            components=[Component(**dict(c)) for c in record["components"]],
+            documents=[Document(**dict(d)) for d in record["documents"]],
+            model3d=Model3DAsset(**dict(record["model"])) if record["model"] else None,
+        )

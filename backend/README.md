@@ -31,3 +31,14 @@ Locally without Docker (requires Python 3.11+, and Neo4j running separately):
     uvicorn app.main:app --reload
 
 The app reads `NEO4J_URI`, `NEO4J_USER`, and `NEO4J_PASSWORD` from the environment, defaulting to `bolt://localhost:7687` / `neo4j` / `password` when unset.
+
+## Running tests
+
+Integration tests run against a real Neo4j instance and reload the Sprint 1 seed dataset (`neo4j/seed.cypher`) before each session — they will wipe whatever is in that database, so never point them at a shared or production instance.
+
+```bash
+docker compose up -d neo4j
+cd backend
+pip install -r requirements-dev.txt
+pytest
+```
