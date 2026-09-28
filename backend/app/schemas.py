@@ -33,3 +33,19 @@ class Model3DAsset(BaseModel):
     glbUrl: str
     meshNodeId: str
     polyCount: Optional[int] = None
+
+
+class SubgraphResponse(BaseModel):
+    machine: Machine
+    components: list[Component]
+    documents: list[Document]
+    model3d: Optional[Model3DAsset] = None
+
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+
+
+class ErrorResponse(BaseModel):
+    error: ErrorDetail
