@@ -1,6 +1,7 @@
 using System.Text;
 using Newtonsoft.Json;
 using OmniScan.Api;
+using OmniScan.Panels;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
@@ -14,6 +15,7 @@ namespace OmniScan.Scan
 
         private ARCameraManager cameraManager;
         private ScanPipeline pipeline;
+        private AnchoredPanelSpawner panels;
         private bool scanning;
         private string overlayText = "Point at a machine and tap Scan.";
 
@@ -30,6 +32,7 @@ namespace OmniScan.Scan
         {
             cameraManager = FindFirstObjectByType<ARCameraManager>();
             pipeline = new ScanPipeline(new ApiClient(baseUrl), minConfidence);
+            panels = gameObject.AddComponent<AnchoredPanelSpawner>();
         }
 
         private async void Scan()
@@ -46,11 +49,13 @@ namespace OmniScan.Scan
 
                 if (outcome.IsSuccess)
                 {
+                    await panels.ShowAsync(outcome.Subgraph);
                     Debug.Log($"[Scan] {outcome.Classification.label} ({outcome.Classification.confidence:P0}) subgraph:\n" +
                               JsonConvert.SerializeObject(outcome.Subgraph, Formatting.Indented));
                 }
                 else
                 {
+                    panels.Clear();
                     Debug.LogWarning($"[Scan] {outcome.Message}");
                 }
             }
