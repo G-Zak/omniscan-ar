@@ -47,5 +47,11 @@ class ErrorDetail(BaseModel):
     message: str
 
 
+class ClassifyResult(BaseModel):
+    machineId: str
+    label: str
+    confidence: float
+
+
 class ErrorResponse(BaseModel):
     error: ErrorDetail
