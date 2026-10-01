@@ -65,3 +65,16 @@ omniscan-ar/
 **Zakaria Guennani** — building this project to specialize in AR/MR/spatial computing, with the goal of moving into applied XR roles in industrial and health-tech contexts.
 
 
+
+## Building for Quest 3
+
+Same Unity project, two build targets (both Android):
+
+| Target | Menu | Profile | XR loader |
+|---|---|---|---|
+| Mobile | OmniScan ▸ Build ▸ Mobile APK (ARCore) | `Android™` | ARCore |
+| Quest 3 | OmniScan ▸ Build ▸ Quest 3 APK (OpenXR) | `Quest3` (defines `OMNISCAN_QUEST`) | OpenXR + Meta Quest feature |
+
+XR Management stores loaders per build target, not per profile, so the menu items switch the loader before building.
+
+One-time setup: install **Meta XR Core SDK** from the Unity Asset Store (My Assets ▸ Package Manager). The npm/UPM copy is a stub. In Project Settings ▸ XR Plug-in Management ▸ Android ▸ OpenXR, enable *Meta Quest Support*, and in Project Settings ▸ Player set Minimum API Level ≥ 29 for the Quest profile. Enable developer mode on the headset and deploy with `adb install -r Builds/omniscan-quest3.apk`.

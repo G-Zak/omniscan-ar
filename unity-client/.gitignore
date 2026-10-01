@@ -1,0 +1,23 @@
+
+# Build outputs
+/[Bb]uilds/
+/.utmp/
+/Library/
+/obj/
+/Temp/
+*.log
+
+# Crash dumps
+*.json.crash
+mono_crash.*.json
+
+# Unity build artifacts
+/.utmp/
+/Library/
+/obj/
+/Temp/
+*.log
+
+# Crash dumps
+*.json.crash
+mono_crash.*.json
