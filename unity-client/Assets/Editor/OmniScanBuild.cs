@@ -6,6 +6,7 @@ using UnityEditor.Build.Profile;
 using UnityEditor.XR.Management;
 using UnityEditor.XR.Management.Metadata;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace OmniScan.Editor
 {
@@ -18,21 +19,29 @@ namespace OmniScan.Editor
         const string ARCoreLoader = "UnityEngine.XR.ARCore.ARCoreLoader";
         const string OpenXRLoader = "UnityEngine.XR.OpenXR.OpenXRLoader";
 
+        // ARCore renders its camera feed most reliably on GLES3 (Vulkan can give a black background);
+        // Quest prefers Vulkan.
+        static readonly GraphicsDeviceType[] MobileGraphics = { GraphicsDeviceType.OpenGLES3 };
+        static readonly GraphicsDeviceType[] QuestGraphics = { GraphicsDeviceType.Vulkan, GraphicsDeviceType.OpenGLES3 };
+
         [MenuItem("OmniScan/Build/Mobile APK (ARCore)")]
         public static void BuildMobile() =>
-            Build(MobileProfile, MobileScene, ARCoreLoader, OpenXRLoader, "Builds/omniscan-mobile.apk");
+            Build(MobileProfile, MobileScene, ARCoreLoader, OpenXRLoader, MobileGraphics, "Builds/omniscan-mobile.apk");
 
         [MenuItem("OmniScan/Build/Quest 3 APK (OpenXR)")]
         public static void BuildQuest()
         {
             if (!File.Exists(QuestSceneBuilder.ScenePath)) QuestSceneBuilder.Create();
-            Build(QuestProfile, QuestSceneBuilder.ScenePath, OpenXRLoader, ARCoreLoader, "Builds/omniscan-quest3.apk");
+            Build(QuestProfile, QuestSceneBuilder.ScenePath, OpenXRLoader, ARCoreLoader, QuestGraphics, "Builds/omniscan-quest3.apk");
         }
 
-        static void Build(string profilePath, string scene, string enable, string disable, string output)
+        static void Build(string profilePath, string scene, string enable, string disable, GraphicsDeviceType[] graphics, string output)
         {
             var profile = AssetDatabase.LoadAssetAtPath<BuildProfile>(profilePath)
                 ?? throw new InvalidOperationException($"Build profile not found: {profilePath}");
+
+            PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
+            PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, graphics);
 
             var settings = XRGeneralSettingsPerBuildTarget.XRGeneralSettingsForBuildTarget(BuildTargetGroup.Android);
             XRPackageMetadataStore.RemoveLoader(settings.AssignedSettings, disable, BuildTargetGroup.Android);
