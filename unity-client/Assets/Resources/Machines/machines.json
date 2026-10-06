@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "machines": [
+    {
+      "id": "omnipress-cp200",
+      "name": "OmniPress CP-200",
+      "manufacturer": "OmniScan Demo Industries",
+      "model": "CP-200 Control Panel",
+      "summary": "Pneumatic press controller. Front panel with status screen, power and emergency stop, run controls and menu navigation. Printed mock-up used for training demos.",
+      "referenceImage": "omnipress-cp200-panel",
+      "imagePixelWidth": 2400,
+      "imagePixelHeight": 1500,
+      "physicalWidthMeters": 0.25,
+      "physicalHeightMeters": 0.15625,
+      "specs": [
+        { "label": "Supply voltage", "value": "24 V DC" },
+        { "label": "Operating pressure", "value": "2.0 to 6.0 bar" },
+        { "label": "Max pressure", "value": "6.5 bar (E-12 above)" },
+        { "label": "Operating temperature", "value": "5 to 40 °C" },
+        { "label": "Firmware", "value": "v3.4.1" },
+        { "label": "Serial number", "value": "CP200-2024-00417" }
+      ],
+      "hotspots": [
+        { "id": "screen", "label": "Status screen", "kind": "screen", "shape": "rect", "x": 0.31, "y": 0.42, "w": 0.48, "h": 0.42 },
+        { "id": "power", "label": "POWER", "kind": "button", "shape": "circle", "x": 0.68, "y": 0.27, "w": 0.075, "h": 0.12 },
+        { "id": "estop", "label": "EMERGENCY STOP", "kind": "emergency", "shape": "circle", "x": 0.875, "y": 0.29, "w": 0.13, "h": 0.208 },
+        { "id": "start", "label": "START", "kind": "button", "shape": "rect", "x": 0.68, "y": 0.56, "w": 0.11, "h": 0.12 },
+        { "id": "stop", "label": "STOP", "kind": "button", "shape": "rect", "x": 0.85, "y": 0.56, "w": 0.11, "h": 0.12 },
+        { "id": "mode", "label": "MODE", "kind": "button", "shape": "rect", "x": 0.68, "y": 0.76, "w": 0.11, "h": 0.12 },
+        { "id": "ok", "label": "OK", "kind": "button", "shape": "rect", "x": 0.85, "y": 0.76, "w": 0.11, "h": 0.12 },
+        { "id": "menu", "label": "MENU", "kind": "button", "shape": "rect", "x": 0.13, "y": 0.80, "w": 0.10, "h": 0.10 },
+        { "id": "up", "label": "UP", "kind": "button", "shape": "rect", "x": 0.27, "y": 0.80, "w": 0.10, "h": 0.10 },
+        { "id": "down", "label": "DOWN", "kind": "button", "shape": "rect", "x": 0.41, "y": 0.80, "w": 0.10, "h": 0.10 },
+        { "id": "status-led", "label": "Status LEDs", "kind": "indicator", "shape": "rect", "x": 0.765, "y": 0.91, "w": 0.28, "h": 0.06 }
+      ],
+      "history": [
+        { "date": "2026-09-18", "type": "repair", "title": "Pressure sensor replaced", "description": "Recurring E-12 overpressure faults traced to a drifting pressure sensor. Sensor replaced and calibrated.", "technician": "A. Benali" },
+        { "date": "2026-07-02", "type": "maintenance", "title": "Quarterly maintenance", "description": "Air filter cleaned, seals inspected, E-STOP function tested OK.", "technician": "S. Martin" },
+        { "date": "2026-04-11", "type": "update", "title": "Firmware updated to v3.4.1", "description": "Fixes false W-03 low-pressure warnings at start-up.", "technician": "A. Benali" },
+        { "date": "2026-01-20", "type": "installation", "title": "Commissioned", "description": "Panel installed on press line 2 and handed over to production.", "technician": "Vendor team" }
+      ],
+      "issues": [
+        { "code": "E-12", "severity": "critical", "title": "Overpressure", "symptom": "Press stops, red LED on, screen shows E-12.", "cause": "Line pressure above 6.5 bar, or a faulty pressure sensor.", "fix": "Reduce supply pressure at the regulator, then clear the fault with the 'Clear fault E-12' procedure. If it returns, check the pressure sensor.", "procedureId": "clear-e12" },
+        { "code": "E-07", "severity": "critical", "title": "Emergency stop engaged", "symptom": "Nothing responds, screen shows E-07.", "cause": "The emergency stop button is pressed in.", "fix": "Make the area safe, then follow 'Emergency stop reset'.", "procedureId": "estop-reset" },
+        { "code": "W-03", "severity": "warning", "title": "Low pressure", "symptom": "Amber LED, screen shows W-03, cycles are slow.", "cause": "Supply pressure below 2.0 bar or an air leak.", "fix": "Check the air supply and hoses for leaks. Warning clears by itself when pressure is back in range.", "procedureId": "" }
+      ],
+      "documents": [
+        { "id": "cp200-user-manual", "title": "CP-200 User Manual", "type": "manual", "summary": "Panel layout, start-up and shutdown, operating modes (MANUAL, AUTO, SETUP), screen messages." },
+        { "id": "cp200-maintenance", "title": "CP-200 Maintenance Guide", "type": "maintenance", "summary": "Quarterly checks, filter cleaning, seal inspection, E-STOP test, sensor calibration." },
+        { "id": "cp200-troubleshooting", "title": "CP-200 Troubleshooting Guide", "type": "troubleshooting", "summary": "Fault and warning codes, causes and fixes: E-07, E-12, W-03." }
+      ],
+      "procedures": [
+        {
+          "id": "startup",
+          "title": "Start-up sequence",
+          "description": "Power on the panel and start an automatic cycle.",
+          "steps": [
+            { "instruction": "Check the EMERGENCY STOP is released (pulled out).", "hotspotId": "estop", "expectedResult": "The red mushroom button is in the up position." },
+            { "instruction": "Press POWER.", "hotspotId": "power", "expectedResult": "The screen lights up and shows 'BOOTING'." },
+            { "instruction": "Wait for the status screen to show READY.", "hotspotId": "screen", "expectedResult": "Screen shows 'READY' and the current pressure." },
+            { "instruction": "Press MODE until the screen shows AUTO.", "hotspotId": "mode", "expectedResult": "Screen shows 'MODE: AUTO'." },
+            { "instruction": "Press OK to confirm the mode.", "hotspotId": "ok", "expectedResult": "Green status LED turns on." },
+            { "instruction": "Press START to begin the cycle.", "hotspotId": "start", "expectedResult": "Screen shows 'RUNNING'." }
+          ]
+        },
+        {
+          "id": "clear-e12",
+          "title": "Clear fault E-12 (overpressure)",
+          "description": "Reset the panel after an overpressure fault once supply pressure is back below 6.5 bar.",
+          "steps": [
+            { "instruction": "Press STOP to make sure the press is halted.", "hotspotId": "stop", "expectedResult": "Screen shows 'STOPPED - E-12'." },
+            { "instruction": "Check the pressure on the status screen is below 6.5 bar.", "hotspotId": "screen", "expectedResult": "Pressure reading is between 2.0 and 6.0 bar." },
+            { "instruction": "Press MENU.", "hotspotId": "menu", "expectedResult": "The main menu opens." },
+            { "instruction": "Press DOWN until 'Faults' is highlighted.", "hotspotId": "down", "expectedResult": "'Faults' is highlighted." },
+            { "instruction": "Press and hold OK for 3 seconds.", "hotspotId": "ok", "expectedResult": "Screen shows 'E-12 CLEARED' and the red LED turns off." },
+            { "instruction": "Press START to resume.", "hotspotId": "start", "expectedResult": "Screen shows 'RUNNING'." }
+          ]
+        },
+        {
+          "id": "estop-reset",
+          "title": "Emergency stop reset",
+          "description": "Recover after the emergency stop was used.",
+          "steps": [
+            { "instruction": "Make sure the cause of the emergency stop is resolved and the area is safe.", "hotspotId": "screen", "expectedResult": "Screen shows 'E-07 EMERGENCY STOP'." },
+            { "instruction": "Twist the EMERGENCY STOP clockwise to release it.", "hotspotId": "estop", "expectedResult": "The button pops up." },
+            { "instruction": "Press OK to acknowledge E-07.", "hotspotId": "ok", "expectedResult": "Screen shows 'READY'." },
+            { "instruction": "Check the status LEDs: only green should be on.", "hotspotId": "status-led", "expectedResult": "Green LED on, red and amber off." }
+          ]
+        }
+      ]
+    }
+  ]
+}
