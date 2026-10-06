@@ -1,18 +1,17 @@
 using OmniScan.Machines;
-using OmniScan.Panels;
+using OmniScan.Overlay;
 using UnityEngine;
 
 namespace OmniScan.Recognition
 {
     /// <summary>
     /// "Recognised" marker drawn on a tracked machine panel: a glowing frame around the panel edges
-    /// and a name label above it. Built in the tracked image's local space (panel in XZ, +Y out of the panel).
+    /// and the machine info panel beside it. Built in the tracked image's local space (panel in XZ, +Y out of the panel).
     /// </summary>
     public class MachineMarker : MonoBehaviour
     {
         private const float FrameThickness = 0.004f;
         private const float FrameHeight = 0.002f;
-        private const float LabelLift = 0.03f;
 
         private static readonly Color FrameColor = new(0.1f, 0.85f, 1f);
 
@@ -20,6 +19,7 @@ namespace OmniScan.Recognition
         public const string MaterialResource = "Materials/OmniScanUnlit";
 
         public Machine Machine { get; private set; }
+        public MachineInfoPanel InfoPanel { get; private set; }
 
         public static MachineMarker Create(Transform trackedImage, Machine machine)
         {
@@ -36,10 +36,7 @@ namespace OmniScan.Recognition
             AddEdge(root.transform, material, new Vector3(size.x / 2f, 0f, 0f), new Vector3(FrameThickness, FrameHeight, size.y));
             AddEdge(root.transform, material, new Vector3(-size.x / 2f, 0f, 0f), new Vector3(FrameThickness, FrameHeight, size.y));
 
-            var label = InfoPanelFactory.Create(root.transform, machine.name, "Recognised", FrameColor);
-            label.transform.localPosition = new Vector3(0f, LabelLift, size.y / 2f + 0.04f);
-            label.transform.localScale *= 0.35f;
-
+            marker.InfoPanel = MachineInfoPanel.Create(root.transform, machine);
             return marker;
         }
 
@@ -62,7 +59,8 @@ namespace OmniScan.Recognition
         {
             var edge = GameObject.CreatePrimitive(PrimitiveType.Cube);
             edge.name = "Edge";
-            Destroy(edge.GetComponent<Collider>());
+            var collider = edge.GetComponent<Collider>();
+            if (Application.isPlaying) Destroy(collider); else DestroyImmediate(collider); // edit mode: editor previews
             edge.transform.SetParent(parent, false);
             edge.transform.localPosition = position;
             edge.transform.localScale = scale;

@@ -6,6 +6,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.XR.ARSubsystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -118,9 +120,15 @@ namespace OmniScan.Editor
                 library = ScriptableObject.CreateInstance<XRReferenceImageLibrary>();
                 AssetDatabase.CreateAsset(library, LibraryPath);
             }
-            while (library.count > 0) library.RemoveAt(0);
+            var machines = MachineCatalogLoader.Load().machines;
 
-            foreach (var machine in MachineCatalogLoader.Load().machines)
+            // Update images in place (stable GUIDs, no git churn); drop images no longer in the catalog.
+            for (var i = library.count - 1; i >= 0; i--)
+            {
+                if (machines.Find(m => m.referenceImage == library[i].name) == null) library.RemoveAt(i);
+            }
+
+            foreach (var machine in machines)
             {
                 var texturePath = $"{ImageFolder}/{machine.referenceImage}.png";
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
@@ -128,8 +136,12 @@ namespace OmniScan.Editor
                     throw new InvalidOperationException(
                         $"Reference image missing for {machine.id}: {texturePath}. Run tools/mockup/generate_panel.py.");
 
-                library.Add();
-                var index = library.count - 1;
+                var index = IndexOf(library, machine.referenceImage);
+                if (index < 0)
+                {
+                    library.Add();
+                    index = library.count - 1;
+                }
                 library.SetName(index, machine.referenceImage);
                 library.SetTexture(index, texture, false);
                 library.SetSpecifySize(index, true);
@@ -140,6 +152,15 @@ namespace OmniScan.Editor
             EditorUtility.SetDirty(library);
             AssetDatabase.SaveAssets();
             return library;
+        }
+
+        static int IndexOf(XRReferenceImageLibrary library, string imageName)
+        {
+            for (var i = 0; i < library.count; i++)
+            {
+                if (library[i].name == imageName) return i;
+            }
+            return -1;
         }
 
         static void WireScene(XRReferenceImageLibrary library)
@@ -162,21 +183,14 @@ namespace OmniScan.Editor
                 go.AddComponent<RecognitionHud>();
             }
 
-            // Mixed-reality smoke test: a small cube 60 cm in front of the start pose proves 3D renders over the camera feed.
+            // The camera feed is verified now; the temporary smoke-test cube is no longer needed.
             var cube = GameObject.Find("MR Smoke Test Cube");
-            if (cube == null)
-            {
-                cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = "MR Smoke Test Cube";
-                UnityEngine.Object.DestroyImmediate(cube.GetComponent<Collider>());
-                cube.transform.SetPositionAndRotation(new Vector3(0f, 0f, 0.6f), Quaternion.Euler(20f, 35f, 0f));
-                cube.transform.localScale = Vector3.one * 0.08f;
-            }
-            var cubeMaterial = new Material(EnsureUnlitMaterial()) { name = "SmokeTestCube" };
-            cubeMaterial.SetColor("_BaseColor", new Color(1f, 0.55f, 0.1f));
-            var cubeMaterialPath = "Assets/Resources/Materials/SmokeTestCube.mat";
-            if (AssetDatabase.LoadAssetAtPath<Material>(cubeMaterialPath) == null) AssetDatabase.CreateAsset(cubeMaterial, cubeMaterialPath);
-            cube.GetComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(cubeMaterialPath);
+            if (cube != null) UnityEngine.Object.DestroyImmediate(cube);
+            AssetDatabase.DeleteAsset("Assets/Resources/Materials/SmokeTestCube.mat");
+
+            // Taps on world-space panels (info tabs, procedure buttons) need an EventSystem using the Input System.
+            if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() == null)
+                new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
 
             var so = new SerializedObject(recognizer);
             so.FindProperty("trackedImageManager").objectReferenceValue = manager;
