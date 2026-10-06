@@ -19,15 +19,6 @@ namespace OmniScan.Scan
         private bool scanning;
         private string overlayText = "Point at a machine and tap Scan.";
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void Bootstrap()
-        {
-            if (FindFirstObjectByType<ScanController>() == null)
-            {
-                new GameObject(nameof(ScanController)).AddComponent<ScanController>();
-            }
-        }
-
         private void Start()
         {
             cameraManager = FindFirstObjectByType<ARCameraManager>();
